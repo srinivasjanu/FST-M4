@@ -1,0 +1,32 @@
+-- Hive project:
+-- Drop table for re-usability
+DROP Table starwars;
+Drop table episodeIV;
+
+-- Activity1:
+-- Create the table
+create table starwars (name string, line string)
+row format delimited fields terminated by '\t'
+tblproperties("skip.header.line.count"="2");
+
+-- Load the inputs into table
+LOAD DATA LOCAL INPATH '/root/inputs/episodeIV_dialouges.txt' INTO TABLE starwars;
+LOAD DATA LOCAL INPATH '/root/inputs/episodeV_dialouges.txt' INTO TABLE starwars;
+LOAD DATA LOCAL INPATH '/root/inputs/episodeVI_dialouges.txt' INTO TABLE starwars;
+
+-- Run the select query and store result in HDFS
+insert overwrite directory '/user/srinivas/HiveProjectOutput'
+select name, count(name) as noOfLines from starwars Group by name ORDER BY noOfLines;
+
+-- Activity 2:
+-- create table with episodeIV script
+create table episodeIV (name string, line string)
+row format delimited fields terminated by '\t'
+tblproperties("skip.header.line.count"="2");
+
+-- Load episodeIV script to table
+LOAD DATA LOCAL INPATH '/root/inputs/episodeIV_dialouges.txt' INTO TABLE episodeIV;
+
+-- Count Luke in each line
+SELECT COUNT(*) FROM episodeIV WHERE INSTR(line, 'Luke') >= 1;
+

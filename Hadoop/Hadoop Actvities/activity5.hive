@@ -1,0 +1,27 @@
+-- create a database
+create database office;
+
+-- Use the office DB
+use office;
+
+-- Drop existing tables
+Drop table employee;
+
+
+-- Create employee table
+create table employee (id INT, name STRING, dept STRING, yoj INT, salary INT)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+TBLPROPERTIES ("skip.header.line.count"="1");
+
+-- Load data into the table
+load data local inpath '/root/EmpData.csv' into table employee;
+
+--Run some statements
+select name, dept from employee where dept='IT'; --No Mapreduce
+select count(*) from employee where dept='IT'; --MapReduce happens
+
+-- Export result to HDFS
+insert overwrite directory '/user/srinivas/HiveOutput'
+row format delimited fields terminated by ','
+select dept, count(*) from employee where dept='IT';
+
